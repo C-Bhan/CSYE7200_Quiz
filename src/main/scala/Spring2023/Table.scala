@@ -18,12 +18,33 @@ case class Table[T](xs: List[T]) {
    *
    * Points: 10
    *
-   * @param p    the predicate of type P => Boolean
-   * @param lens the lens function which takes a T and returns a P.
+   * @param predicate    the predicate of type P => Boolean
+   * @param function the lens function which takes a T and returns a P.
    * @tparam P the underlying type of the predicate.
    * @return a new Table[T] with only the matching rows.
    */
-  def lensFilter[P](p: P => Boolean)(lens: T => P): Table[T] = /** SOLUTION END */ ???
+  def lensFilter[P](predicate: P => Boolean)(function: T => P): Table[T] = ??? /** SOLUTION END */
+
+  /**
+   * Rocket symbol:
+   *
+   * (1)  in a lambda:
+   *      xs map (x => x*x)
+   *
+   * (2)  in a function type:
+   *      Int => String           describes a function which takes an Int and returns a String
+   *
+   * (3)  in parameter declaration of a method where we want call-by-name
+   *      def square(x: => Int): Int = x * x
+   *      square( 9 )
+   *
+   * (4)  in a partially-defined function:
+   *      val x = "Hello World!"
+   *      x match {
+   *        case "Hello World!" => "Goodbye"
+   *        case _ => "fjsakdlfjalks"
+   *      }
+   */
 
   /**
    * Method to do a filter on T given a predicate of type T=>Boolean.
