@@ -1,5 +1,6 @@
 package Spring2023
 
+import scala.math.Numeric.Implicits.infixNumericOps
 import scala.util.Random
 
 case class Table[T](xs: List[T]) {
@@ -11,7 +12,7 @@ case class Table[T](xs: List[T]) {
    *
    * @return the size of this Table.
    */
-  def size: Int = /** SOLUTION END */ ???
+  def size: Int = /** SOLUTION END */ xs.size
 
   /**
    * Method to do a filter on T, given a predicate of type P=>Boolean, and by using a "lens" function of type T=>P.
@@ -23,7 +24,11 @@ case class Table[T](xs: List[T]) {
    * @tparam P the underlying type of the predicate.
    * @return a new Table[T] with only the matching rows.
    */
-  def lensFilter[P](predicate: P => Boolean)(function: T => P): Table[T] = ??? /** SOLUTION END */
+
+  def lensFilter[P](predicate: P => Boolean)(function: T => P): Table[T] = {
+    val filteredList = xs.filter(t => predicate(function(t)))
+    Table(filteredList: _*)
+  }/** SOLUTION END */
 
   /**
    * Rocket symbol:
@@ -56,7 +61,7 @@ case class Table[T](xs: List[T]) {
    * @param p the predicate of type T => Boolean
    * @return a new Table[T] with only the matching rows.
    */
-  def filter(p: T => Boolean): Table[T] = /** SOLUTION END */ ???
+  def filter(p: T => Boolean): Table[T] = /** SOLUTION END */ lensFilter[T](p)(t => t)
 
   /**
    * Method to sample the Table and return a Table which is typically a lot smaller.
@@ -71,7 +76,16 @@ case class Table[T](xs: List[T]) {
    * @param r a Random number generator.
    * @return a new Table[T].
    */
-  def sample(n: Int)(implicit r: Random): Table[T] = /** SOLUTION END */ ???
+    def sample(n: Int)(implicit r: Random): Table[T] = /** SOLUTION END */ {
+      val filteredList = xs.zipWithIndex.filter { case (_, i) => r.nextInt(n) == 0 }.map(_._1)
+      Table(filteredList: _*)
+    }
+//    def sample(n: Int)(implicit r: Random): Table[T] = {
+//      val filteredList = xs.iterator.zip(LazyList.iterate(1)(_ * 2 - 1)).filter {
+//        case (_, i) => r.nextInt(n) == 0
+//      }.map(_._1).toList
+//      Table(filteredList: _*)
+//    }
 
   /**
    * This is a bit harder. In order to make this work, you will have to understand implicits.
@@ -86,7 +100,10 @@ case class Table[T](xs: List[T]) {
    */
   def sum(implicit ev: Numeric[T]): Double = {
     /** SOLUTION */
-    ???
+    {
+//      xs.foldLeft(ev.zero)(ev.plus)
+      xs.foldLeft(ev.zero)((acc, x) => ev.plus(acc, x)).toDouble
+    }
     /** SHOW ??? END */
   }
 }
@@ -103,7 +120,10 @@ object Table {
    * @tparam T the underlying type of xs and the resulting Table.
    * @return a Table[T].
    */
-  def apply[T](xs: LazyList[T]): Table[T] = /** SOLUTION END */ ???
+  def apply[T](xs: LazyList[T]): Table[T] = /** SOLUTION END */ {
+    val list = xs.toList
+    new Table[T](list)
+  }
 
   /**
    * Object method to build a Table[T] from a variable number of T parameters.
@@ -114,5 +134,7 @@ object Table {
    * @tparam T the underlying type of xs and the resulting Table.
    * @return a Table[T].
    */
-  def apply[T](xs: T*): Table[T] = /** SOLUTION END */ ???
+  def apply[T](xs: T*): Table[T] = /** SOLUTION END */ {
+    new Table[T](xs.toList)
+  }
 }

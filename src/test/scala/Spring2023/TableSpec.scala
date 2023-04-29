@@ -34,13 +34,16 @@ class TableSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "do filter" in {
-    val table: Table[String] = Table("ABC", "BCD", "ABA")
+    val table: Table[String] = Table("ABC", "BCD", "ABA", "CED", "BAD")
     val result = table.filter(x => x.startsWith("A"))
+    val result1 = table.filter(x => x.startsWith("BC"))
     result.size shouldBe 2
     result shouldBe Table("ABC", "ABA")
+    result1 shouldBe Table("BCD")
   }
 
   it should "calculate sum" in {
     table.sum shouldBe 2036
   }
 }
+
